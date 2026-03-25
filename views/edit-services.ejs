@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Services Page | Helmstrat CMS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #0a0a0a; }
+    </style>
+</head>
+<body class="min-h-screen text-gray-300">
+    <header class="bg-gray-900 border-b border-gray-800 px-6 py-4">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <a href="/admin/dashboard" class="text-gray-400 hover:text-white">← Back to Dashboard</a>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6 py-8">
+        <h1 class="text-2xl font-bold text-white mb-8">Edit Services Page</h1>
+
+        <form action="/admin/edit-services" method="POST" class="space-y-8">
+            <div class="bg-gray-800 rounded-xl p-6 border border-gray-700">
+                <h2 class="text-lg font-semibold text-white mb-4">Page Header</h2>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-gray-300 mb-2">Subtitle</label>
+                        <input type="text" name="subtitle" value="<%= page.subtitle || 'What We Do' %>" required
+                            class="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-teal-500">
+                    </div>
+                    <div>
+                        <label class="block text-gray-300 mb-2">Content</label>
+                        <input type="text" name="content" value="<%= page.content || '' %>" required
+                            class="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-teal-500">
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gray-800 rounded-xl p-6 border border-gray-700">
+                <h2 class="text-lg font-semibold text-white mb-4">Services</h2>
+                <p class="text-gray-400 text-sm mb-4">Edit each service card. 6 services max.</p>
+                
+                <% const services = page.services || [
+                    { icon: 'monitor', color: 'primary', title: 'Web Development', description: 'Custom websites and web applications.' },
+                    { icon: 'smartphone', color: 'purple-400', title: 'Mobile Apps', description: 'Native and cross-platform mobile applications.' },
+                    { icon: 'palette', color: 'amber-400', title: 'UI/UX Design', description: 'Beautiful, intuitive interfaces.' },
+                    { icon: 'cloud', color: 'blue-400', title: 'Cloud Solutions', description: 'Scalable cloud infrastructure.' },
+                    { icon: 'database', color: 'green-400', title: 'Backend & APIs', description: 'Robust server-side solutions.' },
+                    { icon: 'shield', color: 'pink-400', title: 'Quality Assurance', description: 'Comprehensive testing services.' }
+                ]; %>
+                
+                <% services.forEach(function(service, index) { %>
+                <div class="bg-gray-900 rounded-lg p-4 mb-4 border border-gray-700">
+                    <h3 class="text-white font-medium mb-3">Service <%= index + 1 %></h3>
+                    <div class="grid md:grid-cols-4 gap-4">
+                        <div>
+                            <label class="block text-gray-400 text-sm mb-1">Icon (Lucide name)</label>
+                            <input type="text" name="icon<%= index %>" value="<%= service.icon %>"
+                                class="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-teal-500">
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 text-sm mb-1">Color</label>
+                            <select name="color<%= index %>" class="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-teal-500">
+                                <option value="primary" <%= service.color === 'primary' ? 'selected' : '' %>>Teal (primary)</option>
+                                <option value="purple-400" <%= service.color === 'purple-400' ? 'selected' : '' %>>Purple</option>
+                                <option value="amber-400" <%= service.color === 'amber-400' ? 'selected' : '' %>>Amber</option>
+                                <option value="blue-400" <%= service.color === 'blue-400' ? 'selected' : '' %>>Blue</option>
+                                <option value="green-400" <%= service.color === 'green-400' ? 'selected' : '' %>>Green</option>
+                                <option value="pink-400" <%= service.color === 'pink-400' ? 'selected' : '' %>>Pink</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 text-sm mb-1">Title</label>
+                            <input type="text" name="title<%= index %>" value="<%= service.title %>"
+                                class="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-teal-500">
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 text-sm mb-1">Description</label>
+                            <input type="text" name="description<%= index %>" value="<%= service.description %>"
+                                class="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-teal-500">
+                        </div>
+                    </div>
+                </div>
+                <% }); %>
+            </div>
+
+            <div class="flex space-x-4">
+                <button type="submit" class="bg-teal-500 text-white px-8 py-3 rounded-lg hover:bg-teal-600 font-semibold">
+                    Save Changes
+                </button>
+                <a href="/admin/dashboard" class="bg-gray-700 text-white px-8 py-3 rounded-lg hover:bg-gray-600 font-semibold">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </main>
+</body>
+</html>

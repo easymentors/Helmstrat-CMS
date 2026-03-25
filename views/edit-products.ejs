@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Products Page | Helmstrat CMS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #0a0a0a; }
+    </style>
+</head>
+<body class="min-h-screen text-gray-300">
+    <header class="bg-gray-900 border-b border-gray-800 px-6 py-4">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <a href="/admin/dashboard" class="text-gray-400 hover:text-white">← Back to Dashboard</a>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6 py-8">
+        <h1 class="text-2xl font-bold text-white mb-8">Edit Products Page</h1>
+
+        <form id="productsForm" action="/admin/edit-products" method="POST" class="space-y-8">
+            <div class="bg-gray-800 rounded-xl p-6 border border-gray-700">
+                <h2 class="text-lg font-semibold text-white mb-4">Page Header</h2>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-gray-300 mb-2">Subtitle</label>
+                        <input type="text" name="subtitle" value="<%= page.subtitle || 'Our Products' %>" required
+                            class="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-teal-500">
+                    </div>
+                    <div>
+                        <label class="block text-gray-300 mb-2">Content</label>
+                        <input type="text" name="content" value="<%= page.content || '' %>" required
+                            class="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-teal-500">
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gray-800 rounded-xl p-6 border border-gray-700">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-semibold text-white">Products</h2>
+                    <button type="button" onclick="addProduct()" class="bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700 text-sm">
+                        + Add New Product
+                    </button>
+                </div>
+                
+                <div id="productsContainer">
+                    <% const products = page.products || []; %>
+                    <% if (products.length === 0) { %>
+                    <div class="product-card bg-gray-900 rounded-lg p-4 border border-gray-700 mb-4" data-index="0">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-white font-medium">Product <span class="product-number">1</span></h3>
+                            <button type="button" onclick="removeProduct(this)" class="text-red-400 hover:text-red-300 text-sm hidden remove-btn">Remove</button>
+                        </div>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-gray-400 text-sm mb-1">Product Name *</label>
+                                <input type="text" name="name_0" required
+                                    class="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-teal-500">
+                            </div>
+                            <div>
+                                <label class="block text-gray-400 text-sm mb-1">Tagline</label>
+                                <input type="text" name="tagline_0"
+                                    class="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-teal-500">
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <label class="block text-gray-400 text-sm mb-1">Description *</label>
+                            <textarea name="description_0" rows="2" required
+                                class="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-teal-500"></textarea>
+                        </div>
+                        <div class="grid md:grid-cols-3 gap-4 mt-4">
+                            <div>
+                                <label class="block text-gray-400 text-sm mb-1">Platform</label>
+                                <select name="platform_0" class="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-teal-500">
+                                    <option value="Android">Android</option>
+                                    <option value="iOS">iOS</option>
+                                    <option value="Web">Web</option>
+                                    <option value="Cross-platform">Cross-platform</option>
+                                </select>
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-gray-400 text-sm mb-1">Play Store URL</label>
+                                <input type="url" name="playStoreUrl_0"
+                                    class="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-teal-500">
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <label class="block text-gray-400 text-sm mb-1">Features (comma separated)</label>
+                            <input type="text" name="features_0"
+                                class="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-teal-500"
+                                placeholder="Feature 1, Feature 2, Feature 3">
+                        </div>
+                        <div class="mt-4">
+                            <label class="block text-gray-400 text-sm mb-1">Product Image</label>
+                            <input type="file" name="image_0" accept="image/*"
+                                class="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-teal-500">
+                        </div>
+                    </div>
+                    <% } else { %>
+                    <% products.forEach(function(product, index) { %>
+                    <div class="product-card bg-gray-900 rounded-lg p-4 border border-gray-700 mb-4" data-index="<%= index %>">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-white font-medium">Product <span class="product-number"><%= index + 1 %></span></h3>
+                            <button type="button" onclick="removeProduct(this)" class="text-red-400 hover:text-red-300 text-sm <%= products.length <= 1 ? 'hidden' : '' %> remove-btn">Remove</button>
+                        </div>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-gray-400 text-sm mb-1">Product Name *</label>
+                                <input type="text" name="name_<%= index %>" value="<%= product.name || '' %>" required
+                                    class="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-teal-500">
+                            </div>
+                            <div>
+                                <label class="block text-gray-400 text-sm mb-1">Tagline</label>
+                                <input type="text" name="tagline_<%= index %>" value="<%= product.tagline || '' %>"
+                                    class="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-teal-500">
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <label class="block text-gray-400 text-sm mb-1">Description *</label>
+                            <textarea name="description_<%= index %>" rows="2" required
+                                class="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-teal-500"><%= product.description || '' %></textarea>
+                        </div>
+                        <div class="grid md:grid-cols-3 gap-4 mt-4">
+                            <div>
+                                <label class="block text-gray-400 text-sm mb-1">Platform</label>
+                                <select name="platform_<%= index %>" class="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-teal-500">
+                                    <option value="Android" <%= product.platform === 'Android' ? 'selected' : '' %>>Android</option>
+                                    <option value="iOS" <%= product.platform === 'iOS' ? 'selected' : '' %>>iOS</option>
+                                    <option value="Web" <%= product.platform === 'Web' ? 'selected' : '' %>>Web</option>
+                                    <option value="Cross-platform" <%= product.platform === 'Cross-platform' ? 'selected' : '' %>>Cross-platform</option>
+                                </select>
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-gray-400 text-sm mb-1">Play Store URL</label>
+                                <input type="url" name="playStoreUrl_<%= index %>" value="<%= product.playStoreUrl || '' %>"
+                                    class="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-teal-500">
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <label class="block text-gray-400 text-sm mb-1">Features (comma separated)</label>
+                            <input type="text" name="features_<%= index %>" value="<%= (product.features || []).join(', ') %>"
+                                class="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-teal-500"
+                                placeholder="Feature 1, Feature 2, Feature 3">
+                        </div>
+                        <div class="mt-4">
+                            <label class="block text-gray-400 text-sm mb-1">Product Image</label>
+                            <% if(product.image) { %>
+                            <div class="mb-2">
+                                <img src="<%= product.image %>" alt="Current" class="h-20 rounded">
+                                <p class="text-gray-500 text-xs mt-1">Current image. Upload new one to replace.</p>
+                            </div>
+                            <% } %>
+                            <input type="file" name="image_<%= index %>" accept="image/*"
+                                class="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-teal-500">
+                        </div>
+                    </div>
+                    <% }); %>
+                    <% } %>
+                </div>
+                
+                <input type="hidden" name="productCount" id="productCount" value="<%= Math.max(products.length, 1) %>">
+            </div>
+
+            <div class="flex space-x-4">
+                <button type="submit" class="bg-teal-500 text-white px-8 py-3 rounded-lg hover:bg-teal-600 font-semibold">
+                    Save Changes
+                </button>
+                <a href="/admin/dashboard" class="bg-gray-700 text-white px-8 py-3 rounded-lg hover:bg-gray-600 font-semibold">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </main>
+
+    <script>
+        let productIndex = <%= Math.max(products.length, 1) %>;
+
+        function addProduct() {
+            const container = document.getElementById('productsContainer');
+            const countInput = document.getElementById('productCount');
+            const currentCount = parseInt(countInput.value) + 1;
+            countInput.value = currentCount;
+
+            const productCard = document.createElement('div');
+            productCard.className = 'product-card bg-gray-900 rounded-lg p-4 border border-gray-700 mb-4';
+            productCard.dataset.index = productIndex;
+
+            productCard.innerHTML = `
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-white font-medium">Product <span class="product-number">${currentCount}</span></h3>
+                    <button type="button" onclick="removeProduct(this)" class="text-red-400 hover:text-red-300 text-sm remove-btn">Remove</button>
+                </div>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-gray-400 text-sm mb-1">Product Name *</label>
+                        <input type="text" name="name_${productIndex}" required
+                            class="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-teal-500">
+                    </div>
+                    <div>
+                        <label class="block text-gray-400 text-sm mb-1">Tagline</label>
+                        <input type="text" name="tagline_${productIndex}"
+                            class="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-teal-500">
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <label class="block text-gray-400 text-sm mb-1">Description *</label>
+                    <textarea name="description_${productIndex}" rows="2" required
+                        class="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-teal-500"></textarea>
+                </div>
+                <div class="grid md:grid-cols-3 gap-4 mt-4">
+                    <div>
+                        <label class="block text-gray-400 text-sm mb-1">Platform</label>
+                        <select name="platform_${productIndex}" class="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-teal-500">
+                            <option value="Android">Android</option>
+                            <option value="iOS">iOS</option>
+                            <option value="Web">Web</option>
+                            <option value="Cross-platform">Cross-platform</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-gray-400 text-sm mb-1">Play Store URL</label>
+                        <input type="url" name="playStoreUrl_${productIndex}"
+                            class="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-teal-500">
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <label class="block text-gray-400 text-sm mb-1">Features (comma separated)</label>
+                    <input type="text" name="features_${productIndex}"
+                        class="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-teal-500"
+                        placeholder="Feature 1, Feature 2, Feature 3">
+                </div>
+                <div class="mt-4">
+                    <label class="block text-gray-400 text-sm mb-1">Product Image</label>
+                    <input type="file" name="image_${productIndex}" accept="image/*"
+                        class="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-teal-500">
+                </div>
+            `;
+
+            container.appendChild(productCard);
+            productIndex++;
+            updateProductNumbers();
+        }
+
+        function removeProduct(btn) {
+            const cards = document.querySelectorAll('.product-card');
+            if (cards.length <= 1) {
+                alert('You must have at least one product.');
+                return;
+            }
+            
+            const card = btn.closest('.product-card');
+            card.remove();
+            
+            document.getElementById('productCount').value = cards.length - 1;
+            updateProductNumbers();
+        }
+
+        function updateProductNumbers() {
+            document.querySelectorAll('.product-card').forEach((card, index) => {
+                card.querySelector('.product-number').textContent = index + 1;
+            });
+            
+            const cards = document.querySelectorAll('.product-card');
+            cards.forEach((card, index) => {
+                const removeBtn = card.querySelector('.remove-btn');
+                if (cards.length <= 1) {
+                    removeBtn.classList.add('hidden');
+                } else {
+                    removeBtn.classList.remove('hidden');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

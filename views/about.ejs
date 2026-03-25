@@ -1,0 +1,54 @@
+<%- include('header') %>
+
+<!-- About Section -->
+<section id="about" class="pt-32 pb-24 bg-dark-800/50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16" data-aos="fade-up">
+            <span class="text-primary font-semibold text-sm tracking-wider uppercase"><%= page.subtitle %></span>
+            <h1 class="text-3xl md:text-4xl font-bold text-white mt-3 mb-4">
+                Your Partner in<br>Digital Transformation
+            </h1>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-16 items-center">
+            <div data-aos="fade-right" data-aos-duration="800">
+                <div class="relative">
+                    <div class="gradient-border rounded-2xl p-1">
+                        <div class="bg-dark-700 rounded-xl p-8">
+                            <div class="grid grid-cols-2 gap-4">
+                                <% page.features.forEach(function(feature) { %>
+                                <div class="bg-dark-600 rounded-xl p-6 text-center">
+                                    <i data-lucide="<%= feature.icon %>" class="w-10 h-10 mx-auto text-primary mb-3"></i>
+                                    <div class="text-white font-semibold"><%= feature.title %></div>
+                                </div>
+                                <% }); %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div data-aos="fade-left" data-aos-duration="800" data-aos-delay="200">
+                <p class="text-gray-400 mb-6 leading-relaxed">
+                    <%= page.content %>
+                </p>
+                <p class="text-gray-400 mb-8 leading-relaxed">
+                    <%= page.fullContent %>
+                </p>
+                
+                <div class="space-y-4">
+                    <% page.highlights.forEach(function(item) { %>
+                    <div class="flex items-center space-x-3">
+                        <div class="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center">
+                            <i data-lucide="check" class="w-4 h-4 text-primary"></i>
+                        </div>
+                        <span class="text-gray-300"><%= item %></span>
+                    </div>
+                    <% }); %>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<%- include('footer') %>

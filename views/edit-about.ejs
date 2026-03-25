@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit About Page | Helmstrat CMS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #0a0a0a; }
+    </style>
+</head>
+<body class="min-h-screen text-gray-300">
+    <header class="bg-gray-900 border-b border-gray-800 px-6 py-4">
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <a href="/admin/dashboard" class="text-gray-400 hover:text-white">← Back to Dashboard</a>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-6 py-8">
+        <h1 class="text-2xl font-bold text-white mb-8">Edit About Page</h1>
+
+        <form action="/admin/edit-about" method="POST" class="space-y-8">
+            <div class="bg-gray-800 rounded-xl p-6 border border-gray-700">
+                <h2 class="text-lg font-semibold text-white mb-4">Page Header</h2>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-gray-300 mb-2">Subtitle</label>
+                        <input type="text" name="subtitle" value="<%= page.subtitle || 'About Us' %>" required
+                            class="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-teal-500">
+                    </div>
+                    <div>
+                        <label class="block text-gray-300 mb-2">Main Content</label>
+                        <textarea name="content" rows="3" required
+                            class="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-teal-500"><%= page.content || '' %></textarea>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <label class="block text-gray-300 mb-2">Additional Content</label>
+                    <textarea name="fullContent" rows="3"
+                        class="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-teal-500"><%= page.fullContent || '' %></textarea>
+                </div>
+            </div>
+
+            <div class="bg-gray-800 rounded-xl p-6 border border-gray-700">
+                <h2 class="text-lg font-semibold text-white mb-4">Highlights (comma separated)</h2>
+                <input type="text" name="highlights" value="<%= (page.highlights || []).join(', ') %>"
+                    class="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-teal-500"
+                    placeholder="Agile development, Transparent communication, Support">
+            </div>
+
+            <div class="flex space-x-4">
+                <button type="submit" class="bg-teal-500 text-white px-8 py-3 rounded-lg hover:bg-teal-600 font-semibold">
+                    Save Changes
+                </button>
+                <a href="/admin/dashboard" class="bg-gray-700 text-white px-8 py-3 rounded-lg hover:bg-gray-600 font-semibold">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </main>
+</body>
+</html>
