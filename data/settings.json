@@ -1,0 +1,33 @@
+{
+  "admin": {
+    "password": "12345678",
+    "siteName": "Helmstrat",
+    "siteDescription": "Innovation at Scale"
+  },
+  "site": {
+    "logo": null,
+    "logoText": "Helmstrat",
+    "email": "contact@helmstrat.com",
+    "phone": "+1 (555) 123-4567",
+    "address": "123 Innovation Drive, Tech City, TC 12345",
+    "socialLinks": {
+      "twitter": "#",
+      "linkedin": "#",
+      "github": "#",
+      "instagram": "#"
+    }
+  },
+  "email": {
+    "enabled": true,
+    "host": "smtp.hostinger.com",
+    "port": 465,
+    "secure": true,
+    "user": "contact@helmstrat.com",
+    "password": "YOUR_EMAIL_PASSWORD",
+    "to": "contact@helmstrat.com"
+  },
+  "navigation": {
+    "enabled": true,
+    "excluded": []
+  }
+}

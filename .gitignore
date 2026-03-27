@@ -1,7 +1,6 @@
 node_modules/
-data/
-public/uploads/
-*.json
 .env
 .DS_Store
 npm-debug.log*
+cms-images/
+cms-templates/

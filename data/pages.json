@@ -1,0 +1,254 @@
+{
+  "pages": [
+    {
+      "id": "home",
+      "title": "Home",
+      "slug": "/Home Page",
+      "template": "home",
+      "subtitle": "Software Agency",
+      "content": "Transforming ideas into powerful digital solutions. We craft innovative software, stunning interfaces, and scalable systems that drive business growth.",
+      "heroTitle": "We Build",
+      "heroGradientText": "Digital Excellence",
+      "stats": [
+        {
+          "value": "50+",
+          "label": "Projects Delivered"
+        },
+        {
+          "value": "30+",
+          "label": "Happy Clients"
+        },
+        {
+          "value": "5+",
+          "label": "Years Experience"
+        }
+      ],
+      "ctaPrimary": "Start Your Project",
+      "ctaSecondary": "Our Services",
+      "image": null,
+      "video": null,
+      "order": 1,
+      "createdAt": "2024-01-01T00:00:00Z",
+      "updatedAt": "2026-03-24T17:31:08.820Z"
+    },
+    {
+      "id": "about",
+      "title": "About Us",
+      "slug": "/about",
+      "template": "about",
+      "subtitle": "About Us",
+      "content": "At Helmstrat, we believe in building more than just software – we build partnerships. Our team of passionate developers, designers, and strategists work together to deliver solutions that make an impact.",
+      "fullContent": "From startups to enterprises, we adapt to your needs and deliver results that exceed expectations. Our commitment to quality, transparency, and innovation sets us apart.",
+      "features": [
+        {
+          "icon": "code-2",
+          "title": "Clean Code"
+        },
+        {
+          "icon": "users",
+          "title": "Team Collaboration"
+        },
+        {
+          "icon": "rocket",
+          "title": "Fast Delivery"
+        },
+        {
+          "icon": "headphones",
+          "title": "24/7 Support"
+        }
+      ],
+      "highlights": [
+        "Agile development methodology",
+        "Transparent communication",
+        "Post-launch support & maintenance"
+      ],
+      "image": null,
+      "video": null,
+      "order": 2,
+      "createdAt": "2024-01-01T00:00:00Z",
+      "updatedAt": "2024-01-01T00:00:00Z"
+    },
+    {
+      "id": "services",
+      "title": "Services",
+      "slug": "/services",
+      "template": "services",
+      "subtitle": "What We Do",
+      "content": "Comprehensive digital solutions tailored to your unique needs. We bring your vision to life with precision and care.",
+      "services": [
+        {
+          "icon": "monitor",
+          "color": "primary",
+          "title": "Web Development",
+          "description": "Custom websites and web applications built with modern frameworks. From landing pages to complex enterprise systems."
+        },
+        {
+          "icon": "smartphone",
+          "color": "purple-400",
+          "title": "Mobile Apps",
+          "description": "Native and cross-platform mobile applications for iOS and Android. User-centric design meets powerful functionality."
+        },
+        {
+          "icon": "palette",
+          "color": "amber-400",
+          "title": "UI/UX Design",
+          "description": "Beautiful, intuitive interfaces that users love. Research-driven design that converts and delights."
+        },
+        {
+          "icon": "cloud",
+          "color": "blue-400",
+          "title": "Cloud Solutions",
+          "description": "Scalable cloud infrastructure and migration services. AWS, Azure, and Google Cloud expertise."
+        },
+        {
+          "icon": "database",
+          "color": "green-400",
+          "title": "Backend & APIs",
+          "description": "Robust server-side solutions, RESTful APIs, and database architecture. Secure, scalable, and optimized."
+        },
+        {
+          "icon": "shield",
+          "color": "pink-400",
+          "title": "Quality Assurance",
+          "description": "Comprehensive testing services to ensure your software is bulletproof. Performance, security, and functionality."
+        }
+      ],
+      "image": null,
+      "video": null,
+      "order": 3,
+      "createdAt": "2024-01-01T00:00:00Z",
+      "updatedAt": "2024-01-01T00:00:00Z"
+    },
+    {
+      "id": "testimonials",
+      "title": "Testimonials",
+      "slug": "/testimonials",
+      "template": "testimonials",
+      "subtitle": "Testimonials",
+      "content": "Don't just take our word for it. Here's what our partners have to say about working with Helmstrat.",
+      "testimonials": [
+        {
+          "name": "Sarah Ahmed",
+          "role": "CEO, TechStart Inc.",
+          "initials": "SA",
+          "gradientFrom": "primary",
+          "gradientTo": "primary-light",
+          "rating": 5,
+          "text": "Helmstrat transformed our outdated system into a modern, efficient platform. Their attention to detail and commitment to quality is unmatched. Highly recommended!"
+        },
+        {
+          "name": "Michael Khan",
+          "role": "Founder, DeliveryHub",
+          "initials": "MK",
+          "gradientFrom": "purple-500",
+          "gradientTo": "purple-400",
+          "rating": 5,
+          "text": "The mobile app they built for us exceeded all expectations. Professional, responsive, and truly understood our vision. Our user engagement increased by 200%!"
+        },
+        {
+          "name": "Fatima Ali",
+          "role": "CTO, FinanceFlow",
+          "initials": "FA",
+          "gradientFrom": "amber-500",
+          "gradientTo": "amber-400",
+          "rating": 5,
+          "text": "Working with Helmstrat was a game-changer. Their team's expertise in cloud architecture saved us time and money. They deliver on their promises, every time."
+        }
+      ],
+      "logos": [
+        "TechCorp",
+        "InnovateLab",
+        "DataMax",
+        "CloudFirst",
+        "NextGen"
+      ],
+      "image": null,
+      "video": null,
+      "order": 4,
+      "createdAt": "2024-01-01T00:00:00Z",
+      "updatedAt": "2024-01-01T00:00:00Z"
+    },
+    {
+      "id": "contact",
+      "title": "Contact",
+      "slug": "/contact",
+      "template": "contact",
+      "subtitle": "Get In Touch",
+      "content": "Have a project in mind? We'd love to hear about it. Send us a message and let's discuss how we can help bring your vision to life.",
+      "contactInfo": {
+        "email": "hello@helmstrat.com",
+        "phone": "+1 (555) 123-4567",
+        "location": "123 Innovation Drive, Tech City, TC 12345"
+      },
+      "socialLinks": {
+        "twitter": "#",
+        "linkedin": "#",
+        "github": "#",
+        "instagram": "#"
+      },
+      "image": null,
+      "video": null,
+      "order": 5,
+      "createdAt": "2024-01-01T00:00:00Z",
+      "updatedAt": "2024-01-01T00:00:00Z"
+    },
+    {
+      "id": "products",
+      "title": "Our Products",
+      "slug": "/products",
+      "template": "products",
+      "subtitle": "Our Products",
+      "content": "Explore our suite of innovative digital products designed to simplify your life and boost your productivity.",
+      "products": [
+        {
+          "name": "Desi Recipes",
+          "tagline": "Authentic Pakistani & Indian Recipes",
+          "description": "Discover the rich flavors of Pakistani and Indian cuisine with our comprehensive recipe app. From traditional biryanis to delicious desserts, explore hundreds of authentic recipes with step-by-step instructions, beautiful images, and cooking tips.",
+          "features": [
+            "500+ Authentic Recipes",
+            "Step-by-Step Instructions",
+            "Beautiful Food Images",
+            "Offline Access",
+            "Favorites & Collections",
+            "Serving Size Adjuster"
+          ],
+          "platform": "Android",
+          "playStoreUrl": "https://play.google.com/store/apps/details?id=com.smartrasoi.app",
+          "image": "/images/App.png"
+        },
+        {
+          "name": "Helmstrat CMS",
+          "tagline": "Content Management System",
+          "description": "A powerful yet simple do-it-yourself content management system built with Node.js and Express. Manage your website content, pages, products, and blog posts without any coding knowledge. Features include dynamic pages, products management, blog system, navigation editor, and email integration.",
+          "features": [
+            "Dynamic Pages",
+            "Products Management",
+            "Blog System",
+            "Navigation Editor",
+            "Email Integration",
+            "Easy to Customize"
+          ],
+          "platform": "Web",
+          "playStoreUrl": "",
+          "image": "/uploads/images/1774535510485-Logo Helmstrat.jpg.png"
+        }
+      ],
+      "image": null,
+      "video": null,
+      "order": 6,
+      "createdAt": "2024-01-01T00:00:00Z",
+      "updatedAt": "2026-03-26T14:31:50.491Z"
+    },
+    {
+      "id": "page_1774532436436",
+      "title": "Blog",
+      "slug": "/blog",
+      "content": "This Page will show blog",
+      "image": null,
+      "video": null,
+      "order": 7,
+      "createdAt": "2026-03-26T13:40:36.440Z",
+      "updatedAt": "2026-03-26T13:40:36.440Z"
+    }
+  ]
+}
