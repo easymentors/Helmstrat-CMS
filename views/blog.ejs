@@ -1,0 +1,73 @@
+<%- include('header') %>
+
+<!-- Blog Hero Section -->
+<section class="pt-32 pb-12 bg-dark-800/50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">Blog</h1>
+        <p class="text-gray-400 max-w-2xl mx-auto">Latest news, updates, and insights from our team.</p>
+    </div>
+</section>
+
+<!-- Blog Posts Grid -->
+<section class="py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <% if (posts && posts.length > 0) { %>
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <% posts.forEach(function(post, index) { %>
+            <% const postDate = post.date ? new Date(post.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : ''; %>
+            <article class="gradient-border rounded-2xl overflow-hidden bg-dark-700 hover:glow transition-all duration-300" data-aos="fade-up" data-aos-delay="<%= (index + 1) * 100 %>">
+                <% if(post.image) { %>
+                <div class="aspect-video overflow-hidden">
+                    <img src="<%= post.image %>" alt="<%= post.title %>" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
+                </div>
+                <% } else { %>
+                <div class="aspect-video bg-dark-600 flex items-center justify-center">
+                    <i data-lucide="image" class="w-16 h-16 text-gray-600"></i>
+                </div>
+                <% } %>
+                <div class="p-6">
+                    <div class="flex items-center gap-4 text-sm text-gray-500 mb-3">
+                        <span class="flex items-center gap-1">
+                            <i data-lucide="user" class="w-4 h-4"></i>
+                            <%= post.author || 'Admin' %>
+                        </span>
+                        <% if(post.date) { %>
+                        <span class="flex items-center gap-1">
+                            <i data-lucide="calendar" class="w-4 h-4"></i>
+                            <%= postDate %>
+                        </span>
+                        <% } %>
+                    </div>
+                    <h2 class="text-xl font-bold text-white mb-3 hover:text-primary transition-colors">
+                        <%= post.title %>
+                    </h2>
+                    <p class="text-gray-400 text-sm mb-4 line-clamp-3">
+                        <%= post.content ? post.content.substring(0, 150) + '...' : '' %>
+                    </p>
+                    <a href="/blog/<%= encodeURIComponent(post.title.toLowerCase().replace(/\s+/g, '-')) %>" class="inline-flex items-center text-primary hover:text-primary-light text-sm font-medium">
+                        Read More
+                        <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i>
+                    </a>
+                </div>
+            </article>
+            <% }); %>
+        </div>
+        <% } else { %>
+        <div class="text-center py-16">
+            <div class="w-20 h-20 bg-dark-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i data-lucide="file-text" class="w-10 h-10 text-gray-600"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-white mb-2">No Blog Posts Yet</h3>
+            <p class="text-gray-400 mb-6">Check back soon for interesting articles and updates.</p>
+            <% if(isAdmin) { %>
+            <a href="/admin/edit-blog" class="inline-flex items-center px-6 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary-dark transition-colors">
+                <i data-lucide="plus" class="w-5 h-5 mr-2"></i>
+                Add Blog Post
+            </a>
+            <% } %>
+        </div>
+        <% } %>
+    </div>
+</section>
+
+<%- include('footer') %>

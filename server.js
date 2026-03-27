@@ -27,12 +27,27 @@ if (!fs.existsSync(TEMPLATE_FOLDER)) {
 }
 
 // ============================================
+// HELPER FUNCTIONS
+// ============================================
+
+function formatSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+app.locals.formatSize = formatSize;
+
+// ============================================
 // MIDDLEWARE
 // ============================================
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static('public'));
+app.use('/uploads', express.static('public/uploads'));
 
 app.set('view engine', 'ejs');
 app.set('views', 'views');
@@ -40,9 +55,9 @@ app.set('views', 'views');
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         let dest = 'public/uploads/';
-        if (file.fieldname === 'images') {
+        if (file.fieldname.startsWith('image_') || file.fieldname.startsWith('blogImage_')) {
             dest += 'images/';
-        } else if (file.fieldname === 'videos') {
+        } else if (file.fieldname.startsWith('video_')) {
             dest += 'videos/';
         }
         cb(null, dest);
@@ -69,12 +84,26 @@ function getPages() {
 
 function getPageBySlug(slug) {
     const data = getPages();
-    return data.pages.find(p => p.slug === slug || p.slug === '/' + slug);
+    const normalizedSlug = slug.toLowerCase();
+    return data.pages.find(p => p.slug.toLowerCase() === normalizedSlug || p.slug.toLowerCase() === '/' + normalizedSlug);
 }
 
 function getPageById(id) {
     const data = getPages();
     return data.pages.find(p => p.id === id);
+}
+
+function getBlogPosts() {
+    try {
+        const data = fs.readFileSync('data/blog.json', 'utf8');
+        return JSON.parse(data);
+    } catch (err) {
+        return { posts: [] };
+    }
+}
+
+function saveBlogPosts(data) {
+    fs.writeFileSync('data/blog.json', JSON.stringify(data, null, 2));
 }
 
 function savePages(data) {
@@ -97,15 +126,11 @@ function saveSettings(data) {
 function getNavigationPages() {
     const settings = getSettings();
     const allPages = getPages().pages;
+    const excludedPages = settings.navigation?.excluded || [];
     
-    if (settings.navigation && settings.navigation.pages && settings.navigation.pages.length > 0) {
-        const navOrder = settings.navigation.pages;
-        return allPages
-            .filter(p => navOrder.includes(p.id))
-            .sort((a, b) => navOrder.indexOf(a.id) - navOrder.indexOf(b.id));
-    }
-    
-    return allPages.sort((a, b) => (a.order || 99) - (b.order || 99));
+    return allPages
+        .filter(p => !excludedPages.includes(p.id))
+        .sort((a, b) => (a.order || 99) - (b.order || 99));
 }
 
 function generateId() {
@@ -251,19 +276,36 @@ app.get('/products', (req, res) => {
     res.render('products', { page: page, pages: getNavigationPages(), siteSettings: getSiteSettings() });
 });
 
-// Generic page route (fallback)
-app.get('/page/:slug', (req, res) => {
-    const page = getPageBySlug('/' + req.params.slug);
+// Blog page
+app.get('/blog', (req, res) => {
+    const blogData = getBlogPosts();
+    const blogPage = getPageBySlug('/blog');
+    const page = blogPage || { title: 'Blog', subtitle: 'Our Blog' };
+    res.render('blog', { 
+        page: page, 
+        pages: getNavigationPages(), 
+        siteSettings: getSiteSettings(),
+        posts: blogData.posts || [],
+        isAdmin: false
+    });
+});
+
+// Single blog post
+app.get('/blog/:slug', (req, res) => {
+    const blogData = getBlogPosts();
+    const slug = decodeURIComponent(req.params.slug);
+    const post = blogData.posts.find(p => 
+        p.title.toLowerCase().replace(/\s+/g, '-') === slug
+    );
     
-    if (page) {
-        const template = page.template || 'page';
-        try {
-            res.render(template, { page: page, pages: getNavigationPages() });
-        } catch (err) {
-            res.render('page', { page: page, pages: getNavigationPages(), siteSettings: getSiteSettings() });
-        }
+    if (post) {
+        res.render('blog-post', { 
+            post: post,
+            pages: getNavigationPages(), 
+            siteSettings: getSiteSettings()
+        });
     } else {
-        res.status(404).send('Page not found');
+        res.redirect('/blog');
     }
 });
 
@@ -374,6 +416,71 @@ app.get('/admin', (req, res) => {
     res.render('admin-login', { error: null });
 });
 
+app.get('/admin/media', (req, res) => {
+    const uploadsDir = path.join(__dirname, 'public/uploads/images');
+    const cmsImagesDir = IMAGE_FOLDER;
+    
+    let images = [];
+    
+    // Get images from public/uploads/images
+    if (fs.existsSync(uploadsDir)) {
+        const files = fs.readdirSync(uploadsDir);
+        files.forEach(file => {
+            const filePath = path.join(uploadsDir, file);
+            const stats = fs.statSync(filePath);
+            if (stats.isFile() && /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(file)) {
+                images.push({
+                    filename: file,
+                    path: '/uploads/images/' + file,
+                    size: stats.size,
+                    date: stats.mtime,
+                    location: 'Uploads'
+                });
+            }
+        });
+    }
+    
+    // Get images from CMS Images folder
+    if (fs.existsSync(cmsImagesDir)) {
+        const files = fs.readdirSync(cmsImagesDir);
+        files.forEach(file => {
+            const filePath = path.join(cmsImagesDir, file);
+            const stats = fs.statSync(filePath);
+            if (stats.isFile() && /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(file)) {
+                images.push({
+                    filename: file,
+                    path: '/cms-images/' + file,
+                    size: stats.size,
+                    date: stats.mtime,
+                    location: 'CMS Images'
+                });
+            }
+        });
+    }
+    
+    // Sort by date (newest first)
+    images.sort((a, b) => new Date(b.date) - new Date(a.date));
+    
+    res.render('media', { images: images });
+});
+
+app.post('/admin/media/delete', (req, res) => {
+    const { filepath, location } = req.body;
+    
+    let fullPath = '';
+    if (location === 'Uploads') {
+        fullPath = path.join(__dirname, 'public/uploads/images', filepath);
+    } else if (location === 'CMS Images') {
+        fullPath = path.join(IMAGE_FOLDER, filepath);
+    }
+    
+    if (fullPath && fs.existsSync(fullPath)) {
+        fs.unlinkSync(fullPath);
+    }
+    
+    res.json({ success: true });
+});
+
 app.get('/admin/settings', (req, res) => {
     const settings = getSettings();
     res.render('settings', { settings: settings, success: null, error: null });
@@ -430,15 +537,25 @@ app.get('/admin/navigation', (req, res) => {
     const settings = getSettings();
     res.render('navigation', { 
         pages: allPages,
-        navOrder: settings.navigation?.pages || []
+        navOrder: settings.navigation || { excluded: [] }
     });
 });
 
 app.post('/admin/navigation', (req, res) => {
     const settings = getSettings();
+    let excluded = [];
+    
+    if (req.body.excluded) {
+        if (Array.isArray(req.body.excluded)) {
+            excluded = req.body.excluded;
+        } else {
+            excluded = req.body.excluded.split(',').map(s => s.trim()).filter(s => s);
+        }
+    }
+    
     settings.navigation = {
         enabled: true,
-        pages: req.body.pageIds ? (Array.isArray(req.body.pageIds) ? req.body.pageIds : [req.body.pageIds]) : []
+        excluded: excluded
     };
     saveSettings(settings);
     res.redirect('/admin/dashboard');
@@ -604,6 +721,51 @@ app.get('/admin/edit-products', (req, res) => {
     }
 });
 
+app.get('/admin/edit-blog', (req, res) => {
+    const blogData = getBlogPosts();
+    res.render('edit-blog', { posts: blogData.posts || [] });
+});
+
+app.post('/admin/blog', upload.fields([
+    { name: 'blogImage_0', maxCount: 1 },
+    { name: 'blogImage_1', maxCount: 1 },
+    { name: 'blogImage_2', maxCount: 1 },
+    { name: 'blogImage_3', maxCount: 1 },
+    { name: 'blogImage_4', maxCount: 1 },
+    { name: 'blogImage_5', maxCount: 1 },
+    { name: 'blogImage_6', maxCount: 1 },
+    { name: 'blogImage_7', maxCount: 1 },
+    { name: 'blogImage_8', maxCount: 1 },
+    { name: 'blogImage_9', maxCount: 1 }
+]), (req, res) => {
+    let posts = [];
+    if (req.body.postsData) {
+        try {
+            posts = JSON.parse(req.body.postsData);
+            
+            // Process uploaded images and URL inputs
+            for (let i = 0; i < posts.length; i++) {
+                const imageField = 'blogImage_' + i;
+                const imageUrlField = 'imageUrl_' + i;
+                const existingImage = posts[i].image || '';
+                
+                // First check for uploaded file
+                if (req.files && req.files[imageField] && req.files[imageField][0]) {
+                    posts[i].image = '/uploads/images/' + req.files[imageField][0].filename;
+                }
+                // Then check for image URL
+                else if (req.body[imageUrlField] && req.body[imageUrlField].trim()) {
+                    posts[i].image = req.body[imageUrlField].trim();
+                }
+            }
+        } catch (e) {
+            posts = [];
+        }
+    }
+    saveBlogPosts({ posts: posts });
+    res.redirect('/admin/dashboard');
+});
+
 app.post('/admin/edit-products', upload.fields([
     { name: 'image_0', maxCount: 1 },
     { name: 'image_1', maxCount: 1 },
@@ -627,14 +789,18 @@ app.post('/admin/edit-products', upload.fields([
             const name = req.body['name_' + i];
             if (name) {
                 const imageField = 'image_' + i;
-                let imagePath = '/images/App.png';
+                const imageUrlField = 'imageUrl_' + i;
+                const existingImage = (data.pages[index].products && data.pages[index].products[i] && data.pages[index].products[i].image) || '';
                 
-                if (data.pages[index].products && data.pages[index].products[i] && data.pages[index].products[i].image) {
-                    imagePath = data.pages[index].products[i].image;
-                }
+                let imagePath = existingImage;
                 
+                // First check for uploaded file
                 if (req.files && req.files[imageField] && req.files[imageField][0]) {
                     imagePath = '/uploads/images/' + req.files[imageField][0].filename;
+                }
+                // Then check for image URL (only if different from existing and not empty)
+                else if (req.body[imageUrlField] && req.body[imageUrlField].trim() && req.body[imageUrlField].trim() !== existingImage) {
+                    imagePath = req.body[imageUrlField].trim();
                 }
                 
                 products.push({
@@ -772,6 +938,26 @@ app.post('/admin/upload-image', upload.single('file'), (req, res) => {
 
 // Serve images from external folder
 app.use('/cms-images', express.static(IMAGE_FOLDER));
+
+// ============================================
+// GENERIC PAGE ROUTE (MUST BE LAST)
+// ============================================
+
+app.get('/:slug', (req, res) => {
+    const slug = '/' + req.params.slug;
+    const page = getPageBySlug(slug);
+    
+    if (page) {
+        const template = page.template || 'page';
+        try {
+            res.render(template, { page: page, pages: getNavigationPages(), siteSettings: getSiteSettings() });
+        } catch (err) {
+            res.render('page', { page: page, pages: getNavigationPages(), siteSettings: getSiteSettings() });
+        }
+    } else {
+        res.status(404).send('Page not found');
+    }
+});
 
 // ============================================
 // START SERVER

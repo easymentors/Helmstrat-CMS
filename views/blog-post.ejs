@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= post.title %> | Helmstrat Blog</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { 'sans': ['Inter', 'sans-serif'] },
+                    colors: {
+                        'primary': '#0d9488',
+                        'primary-light': '#14b8a6',
+                        'primary-dark': '#0f766e',
+                        'dark': { 900: '#0a0a0a', 800: '#111111', 700: '#1a1a1a', 600: '#262626' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #0a0a0a; }
+        .gradient-text {
+            background: linear-gradient(135deg, #14b8a6 0%, #22d3ee 50%, #818cf8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .gradient-border { position: relative; background: #111111; }
+        .gradient-border::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            padding: 1px;
+            border-radius: inherit;
+            background: linear-gradient(135deg, #14b8a6, #818cf8);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+        .nav-blur { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+        .prose-content p { margin-bottom: 1rem; line-height: 1.75; }
+        .prose-content h2 { font-size: 1.5rem; font-weight: 700; color: white; margin: 2rem 0 1rem; }
+        .prose-content h3 { font-size: 1.25rem; font-weight: 600; color: white; margin: 1.5rem 0 0.75rem; }
+        .prose-content ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1rem; }
+        .prose-content ol { list-style-type: decimal; padding-left: 1.5rem; margin-bottom: 1rem; }
+        .prose-content li { margin-bottom: 0.5rem; }
+        .prose-content code { background-color: #1a1a1a; padding: 0.125rem 0.375rem; border-radius: 0.25rem; font-size: 0.875rem; }
+        .prose-content pre { background-color: #1a1a1a; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; margin-bottom: 1rem; }
+        .prose-content blockquote { border-left: 4px solid #0d9488; padding-left: 1rem; font-style: italic; color: #9ca3af; margin: 1rem 0; }
+    </style>
+</head>
+<body class="text-gray-300 antialiased">
+    <%- include('header') %>
+
+    <!-- Post Header -->
+    <section class="pt-32 pb-12">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <a href="/blog" class="inline-flex items-center text-gray-400 hover:text-primary mb-6 transition-colors">
+                <i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i>
+                Back to Blog
+            </a>
+            
+            <% if(post.image) { %>
+            <div class="rounded-2xl overflow-hidden mb-8">
+                <img src="<%= post.image %>" alt="<%= post.title %>" class="w-full max-h-[500px] object-cover">
+            </div>
+            <% } %>
+            
+            <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight">
+                <%= post.title %>
+            </h1>
+            
+            <div class="flex flex-wrap items-center gap-6 text-gray-400 mb-8">
+                <div class="flex items-center gap-2">
+                    <div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+                        <i data-lucide="user" class="w-5 h-5 text-primary"></i>
+                    </div>
+                    <span class="font-medium text-white"><%= post.author || 'Admin' %></span>
+                </div>
+                <% if(post.date) { %>
+                <div class="flex items-center gap-2">
+                    <i data-lucide="calendar" class="w-5 h-5"></i>
+                    <span><%= new Date(post.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></span>
+                </div>
+                <% } %>
+            </div>
+        </div>
+    </section>
+
+    <!-- Post Content -->
+    <section class="pb-24">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="gradient-border rounded-2xl p-8 md:p-12">
+                <div class="prose-content text-gray-300">
+                    <%= post.content %>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <%- include('footer') %>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ once: true, duration: 600, easing: 'ease-out' });
+        lucide.createIcons();
+    </script>
+</body>
+</html>

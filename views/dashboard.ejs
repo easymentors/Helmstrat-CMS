@@ -22,6 +22,7 @@
             </div>
             <div class="flex items-center space-x-4">
                 <a href="/" target="_blank" class="text-gray-400 hover:text-white">View Website</a>
+                <a href="/admin/media" class="bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-600">Media</a>
                 <a href="/admin/settings" class="bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-600">Settings</a>
                 <a href="/admin/logout" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700">Logout</a>
             </div>
@@ -32,16 +33,13 @@
     <main class="max-w-7xl mx-auto px-6 py-8">
         <div class="flex justify-between items-center mb-8">
             <h1 class="text-2xl font-bold text-white">Pages Dashboard</h1>
-            <div class="space-x-4">
-                <a href="/admin/add-page" class="bg-teal-500 text-white px-6 py-2 rounded-lg hover:bg-teal-600">+ Add New Page</a>
-                <a href="/admin/upload-template" class="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700">Upload Template</a>
-            </div>
+            <a href="/admin/add-page" class="bg-teal-500 text-white px-6 py-2 rounded-lg hover:bg-teal-600">+ Add New Page</a>
         </div>
 
-        <!-- Quick Edit Section for Main Pages -->
-        <div class="mb-8">
+        <!-- All Pages Grid -->
+        <div class="mb-6">
             <div class="flex justify-between items-center mb-4">
-                <h2 class="text-lg font-semibold text-white">Quick Edit Pages</h2>
+                <h2 class="text-lg font-semibold text-white">All Pages</h2>
                 <a href="/admin/navigation" class="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 text-sm flex items-center gap-2">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path>
@@ -49,84 +47,50 @@
                     Navigation Order
                 </a>
             </div>
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                <a href="/admin/edit-home" class="bg-gray-800 rounded-xl p-4 border border-gray-700 hover:border-teal-500 transition-colors text-center">
-                    <div class="w-12 h-12 bg-teal-500/20 rounded-lg flex items-center justify-center mx-auto mb-2">
-                        <span class="text-2xl">🏠</span>
+            
+            <% const colors = ['teal', 'blue', 'purple', 'amber', 'green', 'pink', 'red', 'indigo']; %>
+            <% const icons = ['🏠', '📄', '📝', '💬', '⚙️', '📱', '🛒', '📧', '📋', 'ℹ️', '🎯', '🌟']; %>
+            
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+                <% pages.forEach(function(page, index) { %>
+                <% 
+                    const colorIndex = index % colors.length;
+                    const iconIndex = index % icons.length;
+                    let editUrl = '/admin/edit/' + page.id;
+                    let pageIcon = icons[iconIndex];
+                    
+                    // Map specific pages to their edit routes
+                    if (page.slug === '/') editUrl = '/admin/edit-home';
+                    else if (page.slug === '/about') editUrl = '/admin/edit-about';
+                    else if (page.slug === '/services') editUrl = '/admin/edit-services';
+                    else if (page.slug === '/testimonials') editUrl = '/admin/edit-testimonials';
+                    else if (page.slug === '/contact') editUrl = '/admin/edit-contact';
+                    else if (page.slug === '/products') editUrl = '/admin/edit-products';
+                    else if (page.slug === '/blog') editUrl = '/admin/edit-blog';
+                    
+                    // Map icons to specific pages
+                    if (page.slug === '/') pageIcon = '🏠';
+                    else if (page.slug === '/about') pageIcon = 'ℹ️';
+                    else if (page.slug === '/services') pageIcon = '⚙️';
+                    else if (page.slug === '/testimonials') pageIcon = '💬';
+                    else if (page.slug === '/contact') pageIcon = '📧';
+                    else if (page.slug === '/products') pageIcon = '📱';
+                    else if (page.slug === '/blog') pageIcon = '📰';
+                %>
+                <a href="<%= editUrl %>" class="bg-gray-800 rounded-xl p-4 border border-gray-700 hover:border-teal-500 hover:scale-105 transition-all text-center group">
+                    <div class="w-14 h-14 bg-<%= colors[colorIndex] %>-500/20 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:bg-<%= colors[colorIndex] %>-500/30 transition-colors">
+                        <span class="text-3xl"><%= pageIcon %></span>
                     </div>
-                    <div class="text-white font-medium">Home</div>
+                    <div class="text-white font-medium mb-1 truncate"><%= page.title %></div>
+                    <div class="text-gray-500 text-xs truncate"><%= page.slug %></div>
                 </a>
-                <a href="/admin/edit-contact" class="bg-gray-800 rounded-xl p-4 border border-gray-700 hover:border-teal-500 transition-colors text-center">
-                    <div class="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center mx-auto mb-2">
-                        <span class="text-2xl">📞</span>
-                    </div>
-                    <div class="text-white font-medium">Contact</div>
-                </a>
-                <a href="/admin/edit-services" class="bg-gray-800 rounded-xl p-4 border border-gray-700 hover:border-teal-500 transition-colors text-center">
-                    <div class="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center mx-auto mb-2">
-                        <span class="text-2xl">⚙️</span>
-                    </div>
-                    <div class="text-white font-medium">Services</div>
-                </a>
-                <a href="/admin/edit-testimonials" class="bg-gray-800 rounded-xl p-4 border border-gray-700 hover:border-teal-500 transition-colors text-center">
-                    <div class="w-12 h-12 bg-amber-500/20 rounded-lg flex items-center justify-center mx-auto mb-2">
-                        <span class="text-2xl">💬</span>
-                    </div>
-                    <div class="text-white font-medium">Testimonials</div>
-                </a>
-                <a href="/admin/edit-products" class="bg-gray-800 rounded-xl p-4 border border-gray-700 hover:border-teal-500 transition-colors text-center">
-                    <div class="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center mx-auto mb-2">
-                        <span class="text-2xl">📱</span>
-                    </div>
-                    <div class="text-white font-medium">Products</div>
-                </a>
-                <a href="/admin/edit-about" class="bg-gray-800 rounded-xl p-4 border border-gray-700 hover:border-teal-500 transition-colors text-center">
-                    <div class="w-12 h-12 bg-pink-500/20 rounded-lg flex items-center justify-center mx-auto mb-2">
-                        <span class="text-2xl">ℹ️</span>
-                    </div>
-                    <div class="text-white font-medium">About</div>
-                </a>
+                <% }); %>
             </div>
-        </div>
-
-        <!-- All Pages List -->
-        <div class="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden">
-            <div class="px-6 py-4 border-b border-gray-800">
-                <h2 class="text-lg font-semibold text-white">All Pages</h2>
-            </div>
-            <table class="w-full">
-                <thead class="bg-gray-800">
-                    <tr>
-                        <th class="px-6 py-4 text-left text-gray-400 font-medium">Title</th>
-                        <th class="px-6 py-4 text-left text-gray-400 font-medium">Slug</th>
-                        <th class="px-6 py-4 text-left text-gray-400 font-medium">Image</th>
-                        <th class="px-6 py-4 text-left text-gray-400 font-medium">Actions</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-800">
-                    <% pages.forEach(function(page) { %>
-                    <tr class="hover:bg-gray-800">
-                        <td class="px-6 py-4 text-white"><%= page.title %></td>
-                        <td class="px-6 py-4 text-gray-400"><%= page.slug %></td>
-                        <td class="px-6 py-4">
-                            <% if (page.image) { %>
-                                <span class="text-green-400">✓</span>
-                            <% } else { %>
-                                <span class="text-gray-600">-</span>
-                            <% } %>
-                        </td>
-                        <td class="px-6 py-4">
-                            <a href="/admin/edit/<%= page.id %>" class="text-teal-400 hover:text-teal-300 mr-4">Edit</a>
-                            <a href="/admin/delete/<%= page.id %>" class="text-red-400 hover:text-red-300" onclick="return confirm('Delete this page?')">Delete</a>
-                        </td>
-                    </tr>
-                    <% }); %>
-                </tbody>
-            </table>
             
             <% if (pages.length === 0) { %>
-            <div class="p-8 text-center text-gray-500">
-                No pages yet. <a href="/admin/add-page" class="text-teal-400 hover:underline">Create your first page</a>
+            <div class="bg-gray-800 rounded-xl p-12 text-center border border-gray-700">
+                <p class="text-gray-400 mb-4">No pages yet. Create your first page to get started.</p>
+                <a href="/admin/add-page" class="bg-teal-500 text-white px-6 py-2 rounded-lg hover:bg-teal-600">+ Add New Page</a>
             </div>
             <% } %>
         </div>
