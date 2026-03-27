@@ -10,20 +10,28 @@ const path = require('path');
 const nodemailer = require('nodemailer');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 // ============================================
 // CONFIGURATION
 // ============================================
 
-const IMAGE_FOLDER = 'C:\\Users\\Ammi\\CMS Images';
-const TEMPLATE_FOLDER = 'C:\\Users\\Ammi\\CMS Templates';
+const IMAGE_FOLDER = path.join(__dirname, 'cms-images');
+const TEMPLATE_FOLDER = path.join(__dirname, 'cms-templates');
+const UPLOADS_FOLDER = path.join(__dirname, 'public/uploads/images');
+const DATA_DIR = path.join(__dirname, 'data');
 
 if (!fs.existsSync(IMAGE_FOLDER)) {
     fs.mkdirSync(IMAGE_FOLDER, { recursive: true });
 }
 if (!fs.existsSync(TEMPLATE_FOLDER)) {
     fs.mkdirSync(TEMPLATE_FOLDER, { recursive: true });
+}
+if (!fs.existsSync(UPLOADS_FOLDER)) {
+    fs.mkdirSync(UPLOADS_FOLDER, { recursive: true });
+}
+if (!fs.existsSync(DATA_DIR)) {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
 }
 
 // ============================================
@@ -46,19 +54,20 @@ app.locals.formatSize = formatSize;
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(express.static('public'));
-app.use('/uploads', express.static('public/uploads'));
+app.use(express.static(path.join(__dirname, 'public')));
+app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
+app.use('/cms-images', express.static(IMAGE_FOLDER));
 
 app.set('view engine', 'ejs');
-app.set('views', 'views');
+app.set('views', path.join(__dirname, 'views'));
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        let dest = 'public/uploads/';
+        let dest = path.join(__dirname, 'public/uploads/');
         if (file.fieldname.startsWith('image_') || file.fieldname.startsWith('blogImage_')) {
-            dest += 'images/';
+            dest = path.join(__dirname, 'public/uploads/images/');
         } else if (file.fieldname.startsWith('video_')) {
-            dest += 'videos/';
+            dest = path.join(__dirname, 'public/uploads/videos/');
         }
         cb(null, dest);
     },
@@ -75,7 +84,7 @@ const upload = multer({ storage: storage });
 
 function getPages() {
     try {
-        const data = fs.readFileSync('data/pages.json', 'utf8');
+        const data = fs.readFileSync(path.join(DATA_DIR, 'pages.json'), 'utf8');
         return JSON.parse(data);
     } catch (err) {
         return { pages: [] };
@@ -95,7 +104,7 @@ function getPageById(id) {
 
 function getBlogPosts() {
     try {
-        const data = fs.readFileSync('data/blog.json', 'utf8');
+        const data = fs.readFileSync(path.join(DATA_DIR, 'blog.json'), 'utf8');
         return JSON.parse(data);
     } catch (err) {
         return { posts: [] };
@@ -103,16 +112,16 @@ function getBlogPosts() {
 }
 
 function saveBlogPosts(data) {
-    fs.writeFileSync('data/blog.json', JSON.stringify(data, null, 2));
+    fs.writeFileSync(path.join(DATA_DIR, 'blog.json'), JSON.stringify(data, null, 2));
 }
 
 function savePages(data) {
-    fs.writeFileSync('data/pages.json', JSON.stringify(data, null, 2));
+    fs.writeFileSync(path.join(DATA_DIR, 'pages.json'), JSON.stringify(data, null, 2));
 }
 
 function getSettings() {
     try {
-        const data = fs.readFileSync('data/settings.json', 'utf8');
+        const data = fs.readFileSync(path.join(DATA_DIR, 'settings.json'), 'utf8');
         return JSON.parse(data);
     } catch (err) {
         return { admin: { password: '12345678' }, navigation: { enabled: true, pages: [] } };
@@ -120,7 +129,7 @@ function getSettings() {
 }
 
 function saveSettings(data) {
-    fs.writeFileSync('data/settings.json', JSON.stringify(data, null, 2));
+    fs.writeFileSync(path.join(DATA_DIR, 'settings.json'), JSON.stringify(data, null, 2));
 }
 
 function getNavigationPages() {
