@@ -48,6 +48,62 @@ function formatSize(bytes) {
 
 app.locals.formatSize = formatSize;
 
+function convertMarkdown(text) {
+    if (!text) return '';
+    
+    let html = text;
+    
+    // Escape HTML first for security
+    html = html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    
+    // Convert headings (must be at start of line)
+    html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+    html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+    html = html.replace(/^# (.+)$/gm, '<h1>$1</h1>');
+    
+    // Convert bold (**text**)
+    html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    
+    // Convert italic (*text*)
+    html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+    
+    // Convert underline (__text__)
+    html = html.replace(/__(.+?)__/g, '<u>$1</u>');
+    
+    // Convert strikethrough (~~text~~)
+    html = html.replace(/~~(.+?)~~/g, '<del>$1</del>');
+    
+    // Convert bullet lists (- item)
+    html = html.replace(/^- (.+)$/gm, '<li>$1</li>');
+    
+    // Convert numbered lists (1. item)
+    html = html.replace(/^\d+\. (.+)$/gm, '<li>$1</li>');
+    
+    // Convert multiple newlines to paragraphs
+    html = html.split(/\n\n+/).map(block => {
+        block = block.trim();
+        if (!block) return '';
+        
+        // If block starts with <li>, wrap in <ul>
+        if (block.match(/^<li>/)) {
+            return '<ul>' + block + '</ul>';
+        }
+        // If block is a heading, return as is
+        if (block.match(/^<h[1-6]>/)) {
+            return block;
+        }
+        // Otherwise wrap in <p>
+        return '<p>' + block + '</p>';
+    }).join('\n');
+    
+    // Convert single newlines within paragraphs to <br>
+    html = html.replace(/([^>])\n([^<])/g, '$1<br>$2');
+    
+    return html;
+}
+
+app.locals.convertMarkdown = convertMarkdown;
+
 // ============================================
 // MIDDLEWARE
 // ============================================
