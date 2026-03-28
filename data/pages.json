@@ -3,7 +3,7 @@
     {
       "id": "home",
       "title": "Home",
-      "slug": "/Home Page",
+      "slug": "/",
       "template": "home",
       "subtitle": "Software Agency",
       "content": "Transforming ideas into powerful digital solutions. We craft innovative software, stunning interfaces, and scalable systems that drive business growth.",

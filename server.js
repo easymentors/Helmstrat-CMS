@@ -244,23 +244,24 @@ app.get('/testimonials', (req, res) => {
 // Contact page
 app.get('/contact', (req, res) => {
     const contactPage = getPageBySlug('/contact');
+    const settings = getSettings();
     const defaultContact = {
         subtitle: 'Get In Touch',
-        content: "Have a project in mind? We'd love to hear about it.",
-        contactInfo: {
-            email: 'hello@helmstrat.com',
-            phone: '+1 (555) 123-4567',
-            location: '123 Innovation Drive, Tech City, TC 12345'
-        },
-        socialLinks: {
-            twitter: '#',
-            linkedin: '#',
-            github: '#',
-            instagram: '#'
-        }
+        content: "Have a project in mind? We'd love to hear about it."
     };
     const page = contactPage || defaultContact;
-    res.render('contact', { page: page, pages: getNavigationPages(), siteSettings: getSiteSettings() });
+    const contactInfo = {
+        email: settings.site?.email || 'hello@helmstrat.com',
+        phone: settings.site?.phone || '+1 (555) 123-4567',
+        location: settings.site?.address || '123 Innovation Drive, Tech City, TC 12345'
+    };
+    const socialLinks = settings.site?.socialLinks || {
+        twitter: '#',
+        linkedin: '#',
+        github: '#',
+        instagram: '#'
+    };
+    res.render('contact', { page: page, pages: getNavigationPages(), siteSettings: getSiteSettings(), contactInfo: contactInfo, socialLinks: socialLinks });
 });
 
 // Products page
@@ -541,6 +542,39 @@ app.get('/admin/dashboard', (req, res) => {
     res.render('dashboard', { pages: data.pages });
 });
 
+// Contact Submissions Admin Page
+app.get('/admin/contacts', (req, res) => {
+    const contactsFile = path.join(__dirname, 'data', 'contacts.json');
+    let contacts = [];
+    try {
+        if (fs.existsSync(contactsFile)) {
+            contacts = JSON.parse(fs.readFileSync(contactsFile, 'utf8'));
+        }
+    } catch (err) {
+        contacts = [];
+    }
+    res.render('contacts', { contacts: contacts });
+});
+
+// Delete Contact
+app.post('/admin/contacts/delete', (req, res) => {
+    const contactsFile = path.join(__dirname, 'data', 'contacts.json');
+    let contacts = [];
+    try {
+        if (fs.existsSync(contactsFile)) {
+            contacts = JSON.parse(fs.readFileSync(contactsFile, 'utf8'));
+        }
+    } catch (err) {
+        contacts = [];
+    }
+    
+    const { id } = req.body;
+    contacts = contacts.filter(c => c.id !== id);
+    fs.writeFileSync(contactsFile, JSON.stringify(contacts, null, 2));
+    
+    res.json({ success: true });
+});
+
 app.get('/admin/navigation', (req, res) => {
     const allPages = getPages().pages;
     const settings = getSettings();
@@ -703,17 +737,6 @@ app.post('/admin/edit-contact', (req, res) => {
     if (index !== -1) {
         data.pages[index].subtitle = req.body.subtitle;
         data.pages[index].content = req.body.content;
-        data.pages[index].contactInfo = {
-            email: req.body.email,
-            phone: req.body.phone,
-            location: req.body.location
-        };
-        data.pages[index].socialLinks = {
-            twitter: req.body.twitter,
-            linkedin: req.body.linkedin,
-            github: req.body.github,
-            instagram: req.body.instagram
-        };
         data.pages[index].updatedAt = new Date().toISOString();
         savePages(data);
     }
