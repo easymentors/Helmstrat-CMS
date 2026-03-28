@@ -102,7 +102,7 @@
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="gradient-border rounded-2xl p-8 md:p-12">
                 <div class="prose-content text-gray-300">
-                    <%= post.content %>
+                    <%- convertMarkdown(post.content || '') %>
                 </div>
             </div>
         </div>
@@ -114,6 +114,65 @@
     <script>
         AOS.init({ once: true, duration: 600, easing: 'ease-out' });
         lucide.createIcons();
+
+        function convertMarkdown(text) {
+            if (!text) return '';
+            
+            let html = text;
+            
+            // Escape HTML first for security
+            html = html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            
+            // Convert headings (must be at start of line)
+            html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+            html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+            html = html.replace(/^# (.+)$/gm, '<h1>$1</h1>');
+            
+            // Convert bold (**text**)
+            html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+            
+            // Convert italic (*text*)
+            html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+            
+            // Convert underline (__text__)
+            html = html.replace(/__(.+?)__/g, '<u>$1</u>');
+            
+            // Convert strikethrough (~~text~~)
+            html = html.replace(/~~(.+?)~~/g, '<del>$1</del>');
+            
+            // Convert bullet lists (- item)
+            html = html.replace(/^- (.+)$/gm, '<li>$1</li>');
+            
+            // Convert numbered lists (1. item)
+            html = html.replace(/^\d+\. (.+)$/gm, '<li>$1</li>');
+            
+            // Wrap consecutive <li> elements in <ul>
+            html = html.replace(/(<li>.*<\/li>)\n?/g, function(match) {
+                return match;
+            });
+            
+            // Convert multiple newlines to paragraphs
+            html = html.split(/\n\n+/).map(block => {
+                block = block.trim();
+                if (!block) return '';
+                
+                // If block starts with <li>, wrap in <ul>
+                if (block.match(/^<li>/)) {
+                    return '<ul>' + block + '</ul>';
+                }
+                // If block is a heading, return as is
+                if (block.match(/^<h[1-6]>/)) {
+                    return block;
+                }
+                // Otherwise wrap in <p>
+                return '<p>' + block + '</p>';
+            }).join('\n');
+            
+            // Convert single newlines within paragraphs to <br>
+            html = html.replace(/([^>])\n([^<])/g, '$1<br>$2');
+            
+            return html;
+        }
     </script>
 </body>
 </html>

@@ -107,6 +107,20 @@
                         <textarea name="content_${index}" rows="6" required
                             class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:border-teal-500"
                             placeholder="Write your blog post content here...">${escapeHtml(post.content || '')}</textarea>
+                        <div class="mt-2 bg-gray-700/50 rounded-lg p-3 text-xs text-gray-400">
+                            <p class="font-medium text-gray-300 mb-2">Formatting Guide:</p>
+                            <div class="grid grid-cols-2 gap-1">
+                                <span><code class="bg-gray-800 px-1 rounded">**bold**</code> → <strong>bold</strong></span>
+                                <span><code class="bg-gray-800 px-1 rounded">*italic*</code> → <em>italic</em></span>
+                                <span><code class="bg-gray-800 px-1 rounded">__underline__</code> → <u>underline</u></span>
+                                <span><code class="bg-gray-800 px-1 rounded">~~strike~~</code> → <del>strike</del></span>
+                                <span><code class="bg-gray-800 px-1 rounded"># Heading 1</code> → Large Heading</span>
+                                <span><code class="bg-gray-800 px-1 rounded">## Heading 2</code> → Small Heading</span>
+                                <span><code class="bg-gray-800 px-1 rounded">- bullet point</code> → • bullet</span>
+                                <span><code class="bg-gray-800 px-1 rounded">1. numbered</code> → 1. numbered</span>
+                            </div>
+                            <p class="mt-2 text-gray-500">Use blank lines to separate paragraphs</p>
+                        </div>
                     </div>
                 </div>
             `;
